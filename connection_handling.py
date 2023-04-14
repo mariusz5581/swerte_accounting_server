@@ -8,7 +8,9 @@ async def server_app(websocket, path):
         data = await websocket.recv()
         data = data.split(' ')
         action = data[0]
+        print(f'Received action: {action}')  # Debug message
 
+        
         # Responding to client
         if action == 'add':
             date = data[1]
@@ -21,6 +23,7 @@ async def server_app(websocket, path):
             to_account = data[8]
             add_transaction(date, title, category, base_ammount, procent_of_tax, ammount_of_tax, from_account, to_account)
             await websocket.send('Transaction added successfully')
+            print('Transaction added successfully')  # Debug message
         elif action == 'update':
             transaction_id = int(data[1])
             date = data[2]
@@ -33,12 +36,16 @@ async def server_app(websocket, path):
             to_account = data[9]
             update_transaction(transaction_id, date, title, category, base_ammount, procent_of_tax, ammount_of_tax, from_account, to_account)
             await websocket.send('Transaction updated successfully')
+            print('Transaction updated successfully')  # Debug message
+
         elif action == 'delete':
             transaction_id = int(data[1])
             delete_transaction(transaction_id)
             await websocket.send('Transaction deleted successfully')
+            print('Transaction deleted successfully') # Debug message
         else:
             await websocket.send('No such action')
+            print(f'Unknown action: {action}')  # Debug message
 
     finally:
         pass

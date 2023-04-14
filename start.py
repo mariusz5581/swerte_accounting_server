@@ -20,9 +20,13 @@ cursor = conn.cursor()
 # Credentials handling
 def read_credentials():
     if os.path.exists(credentials_path):
-        return pd.read_excel(credentials_path, index_col='id')
+        df = pd.read_excel(credentials_path, index_col='id')
+        print(f'Read credentials:\n{df}')  # Debug message
+        return df
     else:
+        print('Credentials file not found, creating an empty DataFrame.')  # Debug message
         return pd.DataFrame(columns=['id', 'username', 'password'])
+
 
 
 def write_credentials(df):
@@ -35,12 +39,16 @@ def add_user(username, password):
     new_user = pd.DataFrame({'id': [user_id], 'username': [username], 'password': [password]})
     df = df.append(new_user, ignore_index=True)
     write_credentials(df)
+    print(f'User added: {username}')  # Debug message
 
 
 def verify_user(username, password):
     df = read_credentials()
     user = df.loc[df['username'] == username]
-    return not user.empty and user.iloc[0]['password'] == password
+    success = not user.empty and user.iloc[0]['password'] == password
+    print(f'User verification: {username}, success: {success}')  # Debug message
+    return success
+
 
 def update_password(username, new_password):
     df = read_credentials()
@@ -48,6 +56,10 @@ def update_password(username, new_password):
     if not user_index.empty:
         df.at[user_index[0], 'password'] = new_password
         write_credentials(df)
+        print(f'Password updated for user: {username}')  # Debug message
+    else:
+        print(f'User not found: {username}')  # Debug message
+
 
 # Run the WebSocket server
 if __name__ == '__main__':
@@ -55,3 +67,4 @@ if __name__ == '__main__':
     asyncio.set_event_loop(loop)
     loop.run_until_complete(websockets.serve(server_app, '167.86.88.177', 5678))
     loop.run_forever()
+
