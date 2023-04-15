@@ -58,5 +58,7 @@ db.serialize(() => {
   
 
 
-module.exports = addNewAccountingTable;
-module.exports = db;
+  module.exports = {
+    db: db,
+    addNewAccountingTable: addNewAccountingTable
+  };

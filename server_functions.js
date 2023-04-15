@@ -1,6 +1,5 @@
 //this is server_functions.js
-const db = require('./database_handling');
-
+const {addNewAccountingTable} = require('./database_handling');
 function handleMessage(socket, message) {
   const data = message.split(' ');
   const action = data[0];
@@ -55,8 +54,8 @@ function addNewUser(socket, username, password){
             console.error(err.message);
             socket.send('Register new user failed');
         } else {
-            addNewAccountingTable(username);
-            socket.send('Register new user successful');
+            db.addNewAccountingTable(username);
+            socket.send('Registration successful');
             console.log(`New user with username '${username}' has been added to the database.`);
         }
     });
