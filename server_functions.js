@@ -1,5 +1,4 @@
 //this is server_functions.js
-const addNewUser = require('./database_handling');
 const db = require('./database_handling');
 
 function handleMessage(socket, message) {
