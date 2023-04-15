@@ -22,4 +22,24 @@ db.serialize(() => {
   });
 });
 
+const username = 't';
+const password = '1';
+
+db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
+  if (err) {
+    console.error(err.message);
+  } else {
+    console.log(`New user with username '${username}' has been added to the database.`);
+  }
+});
+
+db.serialize(() => {
+    db.all(`SELECT * FROM users`, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(rows);
+      }
+    });
+  });
 module.exports = db;
