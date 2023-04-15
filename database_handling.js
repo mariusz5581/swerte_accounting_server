@@ -27,14 +27,14 @@ function addNewAccountingTable(username){
     db.run(`CREATE TABLE IF NOT EXISTS ${username}_accounting (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
-              category TEXT NOT NULL
+              category TEXT NOT NULL,
               title TEXT NOT NULL,
               ammount_base TEXT NOT NULL,
               ammount_percent_tax TEXT NOT NULL,
               ammount_tax TEXT NOT NULL,
               from_account TEXT NOT NULL,
-              to_account TEXT NOT NULL
-              note TEXT,
+              to_account TEXT NOT NULL,
+              note TEXT
             )`, (err) => {
       if (err) {
         console.error(err.message);
