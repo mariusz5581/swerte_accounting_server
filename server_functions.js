@@ -2,7 +2,7 @@
 const { db, addNewAccountingTable } = require('./database_handling');
 
 function handleMessage(socket, message) {
-  const data = message.split(' ');
+  const data = message.split('|#|');
   const action = data[0];
 
   var username = '';
