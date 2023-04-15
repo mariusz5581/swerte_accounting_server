@@ -1,4 +1,3 @@
-# this is start.py
 import socket
 import asyncio
 import sqlite3
@@ -16,6 +15,7 @@ conn = sqlite3.connect('accounting_db.db')
 cursor = conn.cursor()
 
 def setup_database():
+    print("Setting up the database...")  # Debug message
     # Create transactions table
     cursor.execute("""CREATE TABLE IF NOT EXISTS transactions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +41,7 @@ def setup_database():
 setup_database()
 
 def create_users_table():
+    print("Creating users table...")  # Debug message
     cursor.execute("""CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY,
                         username TEXT UNIQUE NOT NULL,
@@ -52,6 +53,7 @@ create_users_table()
 
 # Credentials handling
 def read_credentials():
+    print("Reading credentials...")  # Debug message
     if os.path.exists(credentials_path):
         df = pd.read_excel(credentials_path, index_col='id')
         print(f'Read credentials:\n{df}')  # Debug message
@@ -68,12 +70,12 @@ def read_credentials():
         write_credentials(df)
         return df
 
-
 def write_credentials(df):
+    print("Writing credentials...")  # Debug message
     df.to_excel(credentials_path, index=False)
 
-
 def add_user(username, password):
+    print("Adding user...")  # Debug message
     df = read_credentials()
     user_id = len(df) + 1
     new_user = pd.DataFrame({'id': [user_id], 'username': [username], 'password': [password]})
@@ -81,16 +83,16 @@ def add_user(username, password):
     write_credentials(df)
     print(f'User added: {username}')  # Debug message
 
-
 def verify_user(username, password):
+    print("Verifying user...")  # Debug message
     df = read_credentials()
     user = df.loc[df['username'] == username]
     success = not user.empty and user.iloc[0]['password'] == password
     print(f'User verification: {username}, success: {success}')  # Debug message
     return success
 
-
 def update_password(username, new_password):
+    print("Updating password...")  # Debug message
     df = read_credentials()
     user_index = df.loc[df['username'] == username].index
     if not user_index.empty:
@@ -99,7 +101,6 @@ def update_password(username, new_password):
         print(f'Password updated for user: {username}')  # Debug message
     else:
         print(f'User not found: {username}')  # Debug message
-
 
 async def shutdown():
     while True:
@@ -112,6 +113,7 @@ async def shutdown():
 
 # Run the WebSocket server
 if __name__ == '__main__':
+    print("Starting the WebSocket server...")  # Debug message
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     server_task = loop.create_task(websockets.serve(server_app, '167.86.88.177', 5678))
