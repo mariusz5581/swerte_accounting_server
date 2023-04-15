@@ -7,8 +7,10 @@ const server = new WebSocket.Server({ port: 5678 });
 server.on('connection', (socket) => {
   console.log('Client connected');
 
-  socket.on('message', (message) => {
-    console.log(`Received message: ${message}`);
+  socket.on('message', (data) => {
+    console.log(`Received message: ${data}`);
+    var message = '';
+    message = data.toString();
     handleMessage(socket, message);
   });
 

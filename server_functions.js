@@ -1,6 +1,6 @@
 //this is server_functions.js
 function handleMessage(socket, message) {
-  var data = message.split(' ');
+  const data = message.split(' ');
   const action = data[0];
 
   switch (action) {
@@ -19,7 +19,7 @@ function handleMessage(socket, message) {
       // Add your handling code for the delete action here
       break;
     default:
-      socket.send('No such action');
+        socket.send('No such action');
   }
 }
 
