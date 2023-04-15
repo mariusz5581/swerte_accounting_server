@@ -1,6 +1,6 @@
 //this is server_functions.js
 function handleMessage(socket, message) {
-  const data = message.split(' ');
+  var data = message.split(' ');
   const action = data[0];
 
   switch (action) {
