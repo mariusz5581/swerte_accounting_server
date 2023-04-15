@@ -15,7 +15,30 @@ credentials_path = 'credentials.xlsx'
 conn = sqlite3.connect('accounting_db.db')
 cursor = conn.cursor()
 
-# (Database setup code)
+def setup_database():
+    # Create transactions table
+    cursor.execute("""CREATE TABLE IF NOT EXISTS transactions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        date TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        category TEXT NOT NULL,
+                        base_ammount REAL NOT NULL,
+                        procent_of_tax REAL NOT NULL,
+                        ammount_of_tax REAL NOT NULL,
+                        from_account TEXT NOT NULL,
+                        to_account TEXT NOT NULL)
+                    """)
+
+    # Create users table
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        username TEXT UNIQUE NOT NULL,
+                        password TEXT NOT NULL)
+                    """)
+
+    conn.commit()
+
+setup_database()
 
 # Credentials handling
 def read_credentials():
@@ -24,9 +47,16 @@ def read_credentials():
         print(f'Read credentials:\n{df}')  # Debug message
         return df
     else:
-        print('Credentials file not found, creating an empty DataFrame.')  # Debug message
-        return pd.DataFrame(columns=['id', 'username', 'password'])
+        print('Credentials file not found, creating one with test users.')  # Debug message
+        df = pd.DataFrame(columns=['id', 'username', 'password'])
+        test_users = [{'id': 1, 'username': 't', 'password': '1'},
+                      {'id': 2, 'username': 'tt', 'password': '11'}]
 
+        for user in test_users:
+            df = df.append(user, ignore_index=True)
+
+        write_credentials(df)
+        return df
 
 
 def write_credentials(df):
