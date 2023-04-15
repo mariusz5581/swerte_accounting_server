@@ -1,4 +1,6 @@
 //this is server_functions.js
+const db = require('./database_handling');
+
 function handleMessage(socket, message) {
   const data = message.split(' ');
   const action = data[0];
