@@ -40,6 +40,16 @@ def setup_database():
 
 setup_database()
 
+def create_users_table():
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
+                        id INTEGER PRIMARY KEY,
+                        username TEXT UNIQUE NOT NULL,
+                        password TEXT NOT NULL
+                    )""")
+    conn.commit()
+
+create_users_table()
+
 # Credentials handling
 def read_credentials():
     if os.path.exists(credentials_path):
