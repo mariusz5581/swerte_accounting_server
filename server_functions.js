@@ -47,8 +47,22 @@ function handleLogin(socket, username, password) {
         }
       }
     });
-  }
-  function addNewUser(socket, username, password){
+}
+
+function addNewUser(socket, username, password){
+    db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
+        if (err) {
+            console.error(err.message);
+            socket.send('Register new user failed');
+        } else {
+            addNewAccountingTable(username);
+            socket.send('Register new user successful');
+            console.log(`New user with username '${username}' has been added to the database.`);
+        }
+    });
+}
+
+function addNewTransaction(socket, username, password){
     db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
         if (err) {
             console.error(err.message);
