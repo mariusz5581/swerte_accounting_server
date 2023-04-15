@@ -6,7 +6,7 @@ import pandas as pd
 import os
 
 import websockets
-from connection_handling import server_app, start_server
+from connection_handling import server_app
 
 # Constants
 credentials_path = 'credentials.xlsx'
@@ -61,10 +61,20 @@ def update_password(username, new_password):
         print(f'User not found: {username}')  # Debug message
 
 
+async def shutdown():
+    while True:
+        user_input = input()
+        if user_input.lower() == 'q':
+            print("Shutting down the server...")
+            for task in asyncio.all_tasks():
+                task.cancel()
+            break
+
 # Run the WebSocket server
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(websockets.serve(server_app, '167.86.88.177', 5678))
+    server_task = loop.create_task(websockets.serve(server_app, '167.86.88.177', 5678))
+    shutdown_task = loop.create_task(shutdown())
+    loop.run_until_complete(asyncio.gather(server_task, shutdown_task))
     loop.run_forever()
-
