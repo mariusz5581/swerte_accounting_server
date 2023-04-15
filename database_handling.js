@@ -22,16 +22,19 @@ db.serialize(() => {
   });
 });
 
-const username = 't';
-const password = '1';
-
-db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
-  if (err) {
-    console.error(err.message);
-  } else {
-    console.log(`New user with username '${username}' has been added to the database.`);
-  }
-});
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS swerte_oy_accounting (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              username TEXT UNIQUE NOT NULL,
+              password TEXT NOT NULL
+            )`, (err) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('Users table created or already exists.');
+      }
+    });
+  });
 
 db.serialize(() => {
     db.all(`SELECT * FROM users`, (err, rows) => {
@@ -42,4 +45,9 @@ db.serialize(() => {
       }
     });
   });
+  
+  
+
+
+
 module.exports = db;

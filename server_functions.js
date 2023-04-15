@@ -1,15 +1,25 @@
 //this is server_functions.js
+const addNewUser = require('./database_handling');
 const db = require('./database_handling');
 
 function handleMessage(socket, message) {
   const data = message.split(' ');
   const action = data[0];
 
+  var username = '';
+  var password = '';
+
+
   switch (action) {
     case 'login':
-      const username = data[1];
-      const password = data[2];
+      username = data[1];
+      password = data[2];
       handleLogin(socket, username, password);
+      break;
+      case 'register':
+      username = data[1];
+      password = data[2];
+      addNewUser(socket, username, password);
       break;
     case 'add':
       // Add your handling code for the add action here
@@ -39,5 +49,17 @@ function handleLogin(socket, username, password) {
       }
     });
   }
+  function addNewUser(socket, username, password){
+    db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
+        if (err) {
+            console.error(err.message);
+            socket.send('Register new user failed');
+        } else {
+            socket.send('Register new user successful');
+            console.log(`New user with username '${username}' has been added to the database.`);
+        }
+    });
+}
 
 module.exports = handleMessage;
+
