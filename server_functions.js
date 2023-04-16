@@ -44,7 +44,7 @@ function handleMessage(socket, message) {
 }
 
 function login(socket, username, password) {
-    var db_cmd = 'SELECT * FROM <users_credentials#> WHERE username = ? AND password = ?';
+    var db_cmd = 'SELECT * FROM 0users_credentials0 WHERE username = ? AND password = ?';
     db.get(db_cmd, [username, password], (err, row) => {
       if (err) {
         console.error(err.message);
