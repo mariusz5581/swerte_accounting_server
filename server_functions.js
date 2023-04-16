@@ -36,7 +36,7 @@ function handleMessage(socket, message) {
         var to_account = data[9];
         var note = data[10];
         
-        var table_name = `${username}_accounting`;
+        var table_name = `${username}_transactions`;
         var sql = `INSERT INTO ${table_name} (date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note];
@@ -65,7 +65,7 @@ function handleMessage(socket, message) {
       var to_account = data[10];
       var note = data[11];
       
-      var table_name = `${username}_accounting`;
+      var table_name = `${username}_transactions`;
       var sql = `UPDATE ${table_name} SET 
       date = ?, 
       category = ?, 
@@ -95,7 +95,7 @@ case 'delete':
   var username = data[1];
   var id = data[2];
 
-  var table_name = `${username}_accounting`;
+  var table_name = `${username}_transactions`;
   var sql = `DELETE FROM ${table_name} WHERE id = ?`;
 
   db.run(sql, id, (err) => {
@@ -146,7 +146,7 @@ function addNewUser(socket, username, password){
 }
 
 function sendAllTransactions(socket, username){
-    var table_name = `${username}_accounting`;
+    var table_name = `${username}_transactions`;
     var db_cmd = `SELECT * FROM ${table_name}`;
     db.all(db_cmd, (err, rows) => {
         if (err) {
