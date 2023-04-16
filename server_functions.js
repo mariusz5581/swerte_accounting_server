@@ -66,6 +66,7 @@ function addNewUser(socket, username, password){
             socket.send('Register new user failed');
         } else {
             addNewAccountingTable(username);
+            addNewInvoicesTable(username);
             socket.send('Registration successful');
             console.log(`New user with username '${username}' has been added to the database.`);
         }

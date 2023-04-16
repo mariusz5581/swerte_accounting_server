@@ -9,7 +9,7 @@ const db = new sqlite3.Database('accounting_db.db', (err) => {
 });
 
 db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
+  db.run(`CREATE TABLE IF NOT EXISTS users_credentials_tab (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
@@ -22,9 +22,32 @@ db.serialize(() => {
   });
 });
 
-function addNewAccountingTable(username){
+function addNewTransactionsTable(username){
     db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS ${username}_accounting (
+    db.run(`CREATE TABLE IF NOT EXISTS ${username}_transactions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              date TEXT NOT NULL,
+              category TEXT NOT NULL,
+              title TEXT NOT NULL,
+              ammount_base TEXT NOT NULL,
+              ammount_percent_tax TEXT NOT NULL,
+              ammount_tax TEXT NOT NULL,
+              from_account TEXT NOT NULL,
+              to_account TEXT NOT NULL,
+              note TEXT
+            )`, (err) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('Users table created or already exists.');
+      }
+    });
+  });
+}
+
+function addNewInvoicesTable(username){
+    db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS ${username}_invoices (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
               category TEXT NOT NULL,
@@ -46,7 +69,7 @@ function addNewAccountingTable(username){
 }
 
 db.serialize(() => {
-    db.all(`SELECT * FROM users`, (err, rows) => {
+    db.all(`SELECT * FROM users_credentials_tab`, (err, rows) => {
       if (err) {
         console.error(err.message);
       } else {
@@ -55,10 +78,7 @@ db.serialize(() => {
     });
   });
   
-  
-
-
   module.exports = {
     db: db,
-    addNewAccountingTable: addNewAccountingTable
+    addNewAccountingTable: addNewTransactionsTable
   };
