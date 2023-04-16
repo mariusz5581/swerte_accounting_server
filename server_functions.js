@@ -167,7 +167,8 @@ function sendAllTransactions(socket, username){
               row.note
             ].join('|#|');
           }).join('|@|');
-    
+          log('sendAllTransactions:');
+          log(transactions)
           socket.send(transactions);
         }
       });
