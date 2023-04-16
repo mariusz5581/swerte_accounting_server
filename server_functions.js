@@ -116,7 +116,9 @@ case 'delete':
 }
 
 function handleLogin(socket, username, password) {
-    db.get('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, row) => {
+    var table_name = `users`;
+    var db_cmd = 'SELECT * FROM ${table_name} WHERE username = ? AND password = ?';
+    db.get(db_cmd, [username, password], (err, row) => {
       if (err) {
         console.error(err.message);
         socket.send('Error while attempting to verify user');
@@ -144,16 +146,31 @@ function addNewUser(socket, username, password){
 }
 
 function sendAllTransactions(socket, username){
-    db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
+    var table_name = `${username}_accounting`;
+    var db_cmd = `SELECT * FROM ${table_name}`;
+    db.all(db_cmd, (err, rows) => {
         if (err) {
-            console.error(err.message);
-            socket.send('Register new user failed');
+          console.error(err.message);
+          socket.send('Error while fetching transactions');
         } else {
-            addNewAccountingTable(username);
-            socket.send('Registration successful');
-            console.log(`New user with username '${username}' has been added to the database.`);
+          var transactions = rows.map(row => {
+            return [
+              row.id,
+              row.date,
+              row.category,
+              row.title,
+              row.ammount_base,
+              row.ammount_percent_tax,
+              row.ammount_tax,
+              row.from_account,
+              row.to_account,
+              row.note
+            ].join('|#|');
+          }).join('|@|');
+    
+          socket.send(transactions);
         }
-    });
+      });
 }
 
 
