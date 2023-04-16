@@ -167,6 +167,7 @@ function sendAllTransactions(socket, username){
               row.note
             ].join('|#|');
           }).join('|@|');
+          transactions.slice(0,transactions.length-7);
           console.log('sendAllTransactions:');
           console.log(JSON.stringify(transactions))
           socket.send(transactions);
