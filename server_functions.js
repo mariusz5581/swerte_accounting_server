@@ -1,5 +1,5 @@
 //this is server_functions.js
-const { db, addNewAccountingTable } = require('./database_handling');
+const { db, addNewAccountingTable, addNewInvoicesTable } = require('./database_handling');
 
 function handleMessage(socket, message) {
   const data = message.split('|#|');

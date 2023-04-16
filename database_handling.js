@@ -80,5 +80,6 @@ db.serialize(() => {
   
   module.exports = {
     db: db,
-    addNewAccountingTable: addNewTransactionsTable
+    addNewAccountingTable: addNewTransactionsTable,
+    addNewInvoicesTable: addNewInvoicesTable,
   };
