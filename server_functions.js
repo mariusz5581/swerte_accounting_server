@@ -44,7 +44,7 @@ function handleMessage(socket, message) {
 }
 
 function login(socket, username, password) {
-    var db_cmd = 'SELECT * FROM 0users_credentials0 WHERE username = ? AND password = ?';
+    var db_cmd = 'SELECT * FROM users_credentials_tab WHERE username = ? AND password = ?';
     db.get(db_cmd, [username, password], (err, row) => {
       if (err) {
         console.error(err.message);
@@ -60,7 +60,7 @@ function login(socket, username, password) {
 }
 
 function addNewUser(socket, username, password){
-    db.run(`INSERT INTO 0users_credentials0 (username, password) VALUES (?, ?)`, [username, password], (err) => {
+    db.run(`INSERT INTO users_credentials_tab (username, password) VALUES (?, ?)`, [username, password], (err) => {
         if (err) {
             console.error(err.message);
             socket.send('Register new user failed');
