@@ -117,7 +117,7 @@ case 'delete':
 
 function handleLogin(socket, username, password) {
     var table_name = `users`;
-    var db_cmd = 'SELECT * FROM ${table_name} WHERE username = ? AND password = ?';
+    var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
     db.get(db_cmd, [username, password], (err, row) => {
       if (err) {
         console.error(err.message);
