@@ -26,10 +26,10 @@ function handleMessage(socket, message) {
       break;
       case 'add_new_transaction':
         username = data[1];
-        addNewTransaction(socket,username)
+        addNewTransaction(socket,username, data)
         break;
         case 'update_transaction':
-        updateTransaction(socket, username);
+        updateTransaction(socket, username, data);
         break;
 
     case 'delete_transaction':
@@ -104,7 +104,7 @@ function sendAllTransactions(socket, username){
 }
 
 
-function addNewTransaction(socket, username){
+function addNewTransaction(socket, username, data){
     username = data[1];
         var date = data[2];
         var category = data[3];
@@ -132,7 +132,7 @@ function addNewTransaction(socket, username){
   });
 }
 
-function updateTransaction(socket, username){
+function updateTransaction(socket, username, data){
     var username = data[1];
     var id = data[2];
     var date = data[3];
