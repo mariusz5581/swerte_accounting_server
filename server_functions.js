@@ -13,111 +13,38 @@ function handleMessage(socket, message) {
     case 'login':
       username = data[1];
       password = data[2];
-      handleLogin(socket, username, password);
+      login(socket, username, password);
       break;
       case 'register':
       username = data[1];
       password = data[2];
       addNewUser(socket, username, password);
       break;
-      case 'get':
+      case 'get_transactions':
       username = data[1];
       sendAllTransactions(socket, username);
       break;
-      case 'add':
+      case 'add_new_transaction':
         username = data[1];
-        var date = data[2];
-        var category = data[3];
-        var title = data[4];
-        var ammount_base = data[5];
-        var ammount_percent_tax = data[6];
-        var ammount_tax = data[7];
-        var from_account = data[8];
-        var to_account = data[9];
-        var note = data[10];
-        
-        var table_name = `${username}_transactions`;
-        var sql = `INSERT INTO ${table_name} (date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note];
-        
-        db.run(sql, values, (err) => {
-            if (err) {
-                console.error(err.message);
-                socket.send('Error while adding transaction');
-            } else {
-      console.log(`New transaction added to ${table_name}`);
-      socket.send('Transaction added successfully');
-    }
-  });
-  break;
+        addNewTransaction(socket,username)
+        break;
+        case 'update_transaction':
+        updateTransaction(socket, username);
+        break;
 
-  case 'update':
-      var username = data[1];
-      var id = data[2];
-      var date = data[3];
-      var category = data[4];
-      var title = data[5];
-      var ammount_base = data[6];
-      var ammount_percent_tax = data[7];
-      var ammount_tax = data[8];
-      var from_account = data[9];
-      var to_account = data[10];
-      var note = data[11];
-      
-      var table_name = `${username}_transactions`;
-      var sql = `UPDATE ${table_name} SET 
-      date = ?, 
-      category = ?, 
-      title = ?, 
-      ammount_base = ?, 
-      ammount_percent_tax = ?, 
-      ammount_tax = ?, 
-      from_account = ?, 
-      to_account = ?, 
-      note = ? 
-      WHERE id = ?`;
-      var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note, id];
-      
-      db.run(sql, values, (err) => {
-          if (err) {
-              console.error(err.message);
-      socket.send('Error while updating transaction');
-    } else {
-      console.log(`Transaction ${id} updated in ${table_name}`);
-      socket.send('Transaction updated successfully');
-    }
-});
-break;
+    case 'delete_transaction':
+    var username = data[1];
+    var id = data[2];
+    deleteTransaction(socket, username, id);
+    break;
 
-
-case 'delete':
-  var username = data[1];
-  var id = data[2];
-
-  var table_name = `${username}_transactions`;
-  var sql = `DELETE FROM ${table_name} WHERE id = ?`;
-
-  db.run(sql, id, (err) => {
-    if (err) {
-      console.error(err.message);
-      socket.send('Error while deleting transaction');
-    } else {
-      console.log(`Transaction ${id} deleted from ${table_name}`);
-      socket.send('Transaction deleted successfully');
-    }
-  });
-  break;
-
-    
     default:
         socket.send('No such action');
     }
 }
 
-function handleLogin(socket, username, password) {
-    var table_name = `users`;
-    var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
+function login(socket, username, password) {
+    var db_cmd = 'SELECT * FROM <users_credentials#> WHERE username = ? AND password = ?';
     db.get(db_cmd, [username, password], (err, row) => {
       if (err) {
         console.error(err.message);
@@ -176,14 +103,84 @@ function sendAllTransactions(socket, username){
 }
 
 
-function addNewTransaction(socket, username, password){
-    db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], (err) => {
+function addNewTransaction(socket, username){
+    username = data[1];
+        var date = data[2];
+        var category = data[3];
+        var title = data[4];
+        var ammount_base = data[5];
+        var ammount_percent_tax = data[6];
+        var ammount_tax = data[7];
+        var from_account = data[8];
+        var to_account = data[9];
+        var note = data[10];
+        
+        var table_name = `${username}_transactions`;
+        var sql = `INSERT INTO ${table_name} (date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note];
+        
+        db.run(sql, values, (err) => {
+            if (err) {
+                console.error(err.message);
+                socket.send('Error while adding transaction');
+            } else {
+      console.log(`New transaction added to ${table_name}`);
+      socket.send('Transaction added successfully');
+    }
+  });
+}
+
+function updateTransaction(socket, username){
+    var username = data[1];
+    var id = data[2];
+    var date = data[3];
+    var category = data[4];
+    var title = data[5];
+    var ammount_base = data[6];
+    var ammount_percent_tax = data[7];
+    var ammount_tax = data[8];
+    var from_account = data[9];
+    var to_account = data[10];
+    var note = data[11];
+    
+    var table_name = `${username}_transactions`;
+    var sql = `UPDATE ${table_name} SET 
+    date = ?, 
+    category = ?, 
+    title = ?, 
+    ammount_base = ?, 
+    ammount_percent_tax = ?, 
+    ammount_tax = ?, 
+    from_account = ?, 
+    to_account = ?, 
+    note = ? 
+    WHERE id = ?`;
+    var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note, id];
+    
+    db.run(sql, values, (err) => {
         if (err) {
             console.error(err.message);
-            socket.send('Register new user failed');
+    socket.send('Error while updating transaction');
+  } else {
+    console.log(`Transaction ${id} updated in ${table_name}`);
+    socket.send('Transaction updated successfully');
+  }
+});
+
+}
+
+function deleteTransaction(socket, username, id){
+    var table_name = `${username}_transactions`;
+    var sql = `DELETE FROM ${table_name} WHERE id = ?`;
+
+    db.run(sql, id, (err) => {
+        if (err) {
+        console.error(err.message);
+        socket.send('Error while deleting transaction');
         } else {
-            socket.send('Register new user successful');
-            console.log(`New user with username '${username}' has been added to the database.`);
+        console.log(`Transaction ${id} deleted from ${table_name}`);
+        socket.send('Transaction deleted successfully');
         }
     });
 }
