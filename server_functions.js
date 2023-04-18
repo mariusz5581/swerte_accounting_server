@@ -127,7 +127,7 @@ function addNewTransaction(socket, username, data){
                 socket.send('Error while adding transaction');
             } else {
       console.log(`New transaction added to ${table_name}`);
-      socket.send('Transaction added successfully');
+      socket.send('Transaction added');
     }
   });
 }
