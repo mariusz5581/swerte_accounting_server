@@ -1,5 +1,6 @@
 //this is database_handling.js
 const sqlite3 = require('sqlite3').verbose();
+var db;
 
 const db = new sqlite3.Database('accounting_db.db', (err) => {
   if (err) {

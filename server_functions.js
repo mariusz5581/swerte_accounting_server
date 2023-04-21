@@ -11,31 +11,30 @@ function handleMessage(socket, message) {
   
   switch (action) {
     case 'login':
-      username = data[1];
-      password = data[2];
-      login(socket, username, password);
-      break;
-      case 'register':
-      username = data[1];
-      password = data[2];
-      addNewUser(socket, username, password);
-      break;
-      case 'get_transactions':
-      username = data[1];
-      sendAllTransactions(socket, username);
-      break;
-      case 'add_new_transaction':
         username = data[1];
-        addNewTransaction(socket,username, data)
-        break;
-        case 'update_transaction':
+        password = data[2];
+        login(socket, username, password);
+    break;
+    case 'register':
+        username = data[1];
+        password = data[2];
+        addNewUser(socket, username, password);
+    break;
+    case 'get_transactions':
+        username = data[1];
+        sendAllTransactions(socket, username);
+    break;
+    case 'add_new_transaction':
+        username = data[1];
+        addNewTransaction(socket,username, data);
+    break;
+    case 'update_transaction':
         updateTransaction(socket, username, data);
-        break;
-
+    break;
     case 'delete_transaction':
-    var username = data[1];
-    var id = data[2];
-    deleteTransaction(socket, username, id);
+        var username = data[1];
+        var id = data[2];
+        deleteTransaction(socket, username, id);
     break;
 
     default:
@@ -63,7 +62,7 @@ function addNewUser(socket, username, password){
     db.run(`INSERT INTO users_credentials_tab (username, password) VALUES (?, ?)`, [username, password], (err) => {
         if (err) {
             console.error(err.message);
-            socket.send('Register new user failed');
+            socket.send(err.message);
         } else {
             addNewAccountingTable(username);
             addNewInvoicesTable(username);
