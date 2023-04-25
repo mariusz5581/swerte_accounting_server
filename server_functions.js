@@ -10,16 +10,18 @@ function handleMessage(socket, message) {
   var username = '';
   var password = '';
 
-  for(var i = 0;i<message.length;i++){
-    var t = message[i].split('|^|');
+  for(var i = 0;i<data.length;i++){
+    var t = data[i].split('|^|');
     const identifier = t[0];
     const value = t[1];
+    console.log(data);
     switch(t[0]){
       case 'userid':
         userId = value;
         break;
       case 'action':
         action = value;
+        break;
     }
   }
 
