@@ -60,7 +60,7 @@ function addNewTransactionsTable(username, userId){
   });
 }
 
-function addNewInvoicesTable(username, UserId){
+function addNewInvoicesTable(username, userId){
     db[userId].serialize(() => {
     db[userId].run(`CREATE TABLE IF NOT EXISTS ${username}_invoices (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,6 +96,6 @@ db[0].serialize(() => {
   module.exports = {
     db: db,
     createNewUserDatabase: createNewUserDatabase,
-    addNewAccountingTable: addNewTransactionsTable,
+    addNewTransactionsTable: addNewTransactionsTable,
     addNewInvoicesTable: addNewInvoicesTable,
   };
