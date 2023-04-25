@@ -116,36 +116,65 @@ function addNewUser(socket, username,password) {
   });
 }
 
-function sendAllTransactions(socket, username){
-    var table_name = `${username}_transactions`;
-    var db_cmd = `SELECT * FROM ${table_name}`;
-    db.all(db_cmd, (err, rows) => {
-        if (err) {
-          console.error(err.message);
-          socket.send('Error while fetching transactions');
-        } else {
-          var transactions = rows.map(row => {
-            return [
-              row.id,
-              row.date,
-              row.category,
-              row.title,
-              row.ammount_base,
-              row.ammount_percent_tax,
-              row.ammount_tax,
-              row.from_account,
-              row.to_account,
-              row.note
-            ].join('|&|');
-          }).join('|@|');
-          transactions.slice(0,transactions.length-7);
-          console.log('sendAllTransactions:');
-          console.log(JSON.stringify(transactions))
-          socket.send(transactions);
-        }
-      });
+function sendAllTransactions(socket, username) {
+  var table_name = `${username}_transactions`;
+  var db_cmd = `SELECT * FROM ${table_name}`;
+  db.all(db_cmd, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      socket.send('Error while fetching transactions');
+    } else {
+      var transactions = rows.map(row => {
+        return [
+          'transactionId|^|' + row.id,
+          'date|^|' + row.date,
+          'category|^|' + row.category,
+          'title|^|' + row.title,
+          'baseAmount|^|' + row.ammount_base,
+          'percentOfTax|^|' + row.ammount_percent_tax,
+          'amountOfTax|^|' + row.ammount_tax,
+          'fromAccount|^|' + row.from_account,
+          'toAccount|^|' + row.to_account,
+          'note|^|' + row.note,
+          'endOfTransaction|^|',
+        ].join('|#|');});
+      console.log('sendAllTransactions:');
+      console.log(JSON.stringify(transactions));
+      socket.send(transactions);
+    }
+  });
 }
 
+
+function sendAllTransactions_OLD(socket, username){
+  var table_name = `${username}_transactions`;
+  var db_cmd = `SELECT * FROM ${table_name}`;
+  db.all(db_cmd, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+        socket.send('Error while fetching transactions');
+      } else {
+        var transactions = rows.map(row => {
+          return [
+            row.id,
+            row.date,
+            row.category,
+            row.title,
+            row.ammount_base,
+            row.ammount_percent_tax,
+            row.ammount_tax,
+            row.from_account,
+            row.to_account,
+            row.note
+          ].join('|&|');
+        }).join('|@|');
+        transactions.slice(0,transactions.length-7);
+        console.log('sendAllTransactions:');
+        console.log(JSON.stringify(transactions))
+        socket.send(transactions);
+      }
+    });
+}
 
 function addNewTransaction(socket, username, data){
     username = data[1];
