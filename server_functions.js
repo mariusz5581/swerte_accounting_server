@@ -90,8 +90,10 @@ function login(socket, username, password) {
     });
 }
 
-function addNewUser(socket, username, password) {
-  db_users.run(`INSERT INTO users_credentials_tab (username, password) VALUES (?, ?)`, [username, password], function (err) {
+function addNewUser(socket, username,password) {
+  
+  const id = createNewUserDatabase(username,db.length);
+  db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id, username, password], function (err) {
     if (err) {
       console.error(err.message);
       socket.send(err.message);
