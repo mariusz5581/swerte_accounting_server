@@ -3,7 +3,6 @@ const WebSocket = require('ws');
 const handleMessage = require('./server_functions');
 
 
-
 const server = new WebSocket.Server({ port: 5678 });
 
 server.on('connection', (socket) => {

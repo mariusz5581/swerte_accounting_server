@@ -1,13 +1,25 @@
 //this is database_handling.js
 const sqlite3 = require('sqlite3').verbose();
-var db;
-
- db = new sqlite3.Database('accounting_db.db', (err) => {
+const db_users = new sqlite3.Database('users.db', (err) => {
   if (err) {
     console.error(err.message);
   }
-  console.log('Connected to the accounting_db database.');
-});
+  console.log('Connected to the users.db database.');
+}); 
+
+
+function createNewUserDatabase(username, userId) {
+  const dbName = `${username}_${userId}.db`;
+  const userDb = new sqlite3.Database(dbName, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log(`Created new database for user ${username} with ID ${userId}`);
+    }
+  });
+
+  return userDb;
+}
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users_credentials_tab (
@@ -80,7 +92,9 @@ db.serialize(() => {
   });
   
   module.exports = {
+    db_users: db_users,
     db: db,
+    createNewUserDatabase: createNewUserDatabase,
     addNewAccountingTable: addNewTransactionsTable,
     addNewInvoicesTable: addNewInvoicesTable,
   };

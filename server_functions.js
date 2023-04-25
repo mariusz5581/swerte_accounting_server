@@ -1,5 +1,7 @@
 //this is server_functions.js
-const { db, addNewAccountingTable, addNewInvoicesTable } = require('./database_handling');
+const { db_users, db, createNewUserDatabase, addNewAccountingTable, addNewInvoicesTable } = require('./database_handling');
+
+let db = [];
 
 function handleMessage(socket, message) {
   const data = message.split('|#|');
@@ -73,18 +75,23 @@ function login(socket, username, password) {
     });
 }
 
-function addNewUser(socket, username, password){
-    db.run(`INSERT INTO users_credentials_tab (username, password) VALUES (?, ?)`, [username, password], (err) => {
-        if (err) {
-            console.error(err.message);
-            socket.send(err.message);
-        } else {
-            addNewAccountingTable(username);
-            addNewInvoicesTable(username);
-            socket.send('Registration successful');
-            console.log(`New user with username '${username}' has been added to the database.`);
-        }
-    });
+function addNewUser(socket, username, password) {
+  db_users.run(`INSERT INTO users_credentials_tab (username, password) VALUES (?, ?)`, [username, password], function (err) {
+    if (err) {
+      console.error(err.message);
+      socket.send(err.message);
+    } else {
+      const userId = this.lastID;
+      const userDb = createNewUserDatabase(username, userId);
+      db[userId] = userDb;
+
+      addNewAccountingTable(userDb, username);
+      addNewInvoicesTable(userDb, username);
+
+      socket.send('Registration successful');
+      console.log(`New user with username '${username}' and ID '${userId}' has been added to the database.`);
+    }
+  });
 }
 
 function sendAllTransactions(socket, username){
