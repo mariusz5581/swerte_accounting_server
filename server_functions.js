@@ -1,14 +1,33 @@
 //this is server_functions.js
 const { db, createNewUserDatabase, addNewTransactionsTable, addNewInvoicesTable } = require('./database_handling');
 
+class Data{
+  user = new UserData();
+  transaction = [new TransactionData()];
+}
+
+class TransactionData{
+  date = '';
+  title = '';
+  catergory = '';
+  baseAmmount = '';
+  percentOfTax = '';
+  ammountOfTax = '';
+  fromAccount = '';
+  toAccount = '';
+}
+
+class UserData{
+  action = '';
+  registeredUsername = '';
+  password = '';
+  registeredUserId = '';
+}
 
 function handleMessage(socket, message) {
+  var t = new Data();
   const data = message.split('|#|');
-  var action = '';
-  var registeredUsername = '';
-  var password = '';
-  var registeredUserId = '';
-
+  
 
   for(var i = 0;i<data.length;i++){
     var t = data[i].split('|^|');
@@ -17,16 +36,16 @@ function handleMessage(socket, message) {
     console.log(data[i]);
     switch(identifier){
       case 'action':
-        action = value;
+        t.action = value;
         break;
       case 'registeredUserId':
-        registeredUserId = value;
+        t.registeredUserId = value;
         break;
       case 'registeredUsername':
-        registeredUsername = value;
+        t.registeredUsername = value;
         break;
       case 'password':
-        password = value;
+        t.password = value;
         break;
       default:
         console.log('data:'+ data);
@@ -35,28 +54,28 @@ function handleMessage(socket, message) {
   }
 
   
-  switch (action) {
+  switch (t.action) {
     case 'login':
-        login(socket, registeredUsername, password);
+        login(socket, t.registeredUsername, t.password);
     break;
     case 'register':
-        addNewUser(socket, registeredUsername, password);
+        addNewUser(socket, t.registeredUsername, t.password);
     break;
     case 'getTransactions':
-        sendAllTransactions(socket, registeredUsername);
+        sendAllTransactions(socket, t.registeredUsername);
     break;
     case 'add_new_transaction':
-        addNewTransaction(socket,registeredUsername, data);
+        addNewTransaction(socket,t, data);
     break;
     case 'update_transaction':
-        updateTransaction(socket, registeredUsername, data);
+        updateTransaction(socket, t.registeredUsername, data);
     break;
     case 'delete_transaction':
-        deleteTransaction(socket, registeredUsername, id);
+        deleteTransaction(socket, t.registeredUsername, t.id);
     break;
 
     default:
-        socket.send('No such action');
+        socket.send(`No such action as ${t.action}`);
     }
 }
 
