@@ -1,6 +1,8 @@
 //this is database_handling.js
 const sqlite3 = require('sqlite3').verbose();
-const users = new sqlite3.Database('users.db', (err) => {
+let db = [];
+
+db[0] = new sqlite3.Database('users.db', (err) => {
   if (err) {
     console.error(err.message);
   }
@@ -21,8 +23,8 @@ function createNewUserDatabase(username, userId) {
   return userDb;
 }
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
+db[0].serialize(() => {
+  db[0].run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
@@ -35,9 +37,9 @@ db.serialize(() => {
   });
 });
 
-function addNewTransactionsTable(username){
-    db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS ${username}_transactions (
+function addNewTransactionsTable(username, userId){
+    db[userId].serialize(() => {
+    db[userId].run(`CREATE TABLE IF NOT EXISTS ${username}_transactions (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
               category TEXT NOT NULL,
@@ -58,9 +60,9 @@ function addNewTransactionsTable(username){
   });
 }
 
-function addNewInvoicesTable(username){
-    db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS ${username}_invoices (
+function addNewInvoicesTable(username, UserId){
+    db[userId].serialize(() => {
+    db[userId].run(`CREATE TABLE IF NOT EXISTS ${username}_invoices (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
               category TEXT NOT NULL,
@@ -81,7 +83,7 @@ function addNewInvoicesTable(username){
   });
 }
 
-db.serialize(() => {
+db[0].serialize(() => {
     db.all(`SELECT * FROM users`, (err, rows) => {
       if (err) {
         console.error(err.message);
@@ -92,7 +94,6 @@ db.serialize(() => {
   });
   
   module.exports = {
-    users: users,
     db: db,
     createNewUserDatabase: createNewUserDatabase,
     addNewAccountingTable: addNewTransactionsTable,
