@@ -4,9 +4,7 @@ const { db, createNewUserDatabase, addNewAccountingTable, addNewInvoicesTable } 
 
 function handleMessage(socket, message) {
   const data = message.split('|#|');
-  var userId = '';
   var action = '';
-
   var registeredUsername = '';
   var password = '';
   var registeredUserId = '';
@@ -18,9 +16,6 @@ function handleMessage(socket, message) {
     const value = t[1];
     console.log(data[i]);
     switch(identifier){
-      case 'userid':
-        userId = value;
-        break;
       case 'action':
         action = value;
         break;
@@ -42,31 +37,22 @@ function handleMessage(socket, message) {
   
   switch (action) {
     case 'login':
-        username = data[2];
-        password = data[3];
-        login(socket, username, password);
+        login(socket, registeredUsername, password);
     break;
     case 'register':
-        username = data[2];
-        password = data[3];
-        addNewUser(socket, username, password);
+        addNewUser(socket, registeredUsername, password);
     break;
     case 'get_transactions':
-        username = data[2];
-        sendAllTransactions(socket, username);
+        sendAllTransactions(socket, registeredUsername);
     break;
     case 'add_new_transaction':
-        username = data[2];
-        addNewTransaction(socket,username, data);
+        addNewTransaction(socket,registeredUsername, data);
     break;
     case 'update_transaction':
-        username = data[2];
-        updateTransaction(socket, username, data);
+        updateTransaction(socket, registeredUsername, data);
     break;
     case 'delete_transaction':
-        var username = data[2];
-        var id = data[3];
-        deleteTransaction(socket, username, id);
+        deleteTransaction(socket, registeredUsername, id);
     break;
 
     default:
