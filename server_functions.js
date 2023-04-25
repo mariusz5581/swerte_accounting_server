@@ -69,7 +69,7 @@ function login(socket, username, password) {
     } else {
       if (row) {
         // When username and password match, send the user ID along with the success message
-        socket.send(`Login successful|#|registeredUserId|^|${row.id}`);
+        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}`);
       } else {
         socket.send('Invalid credentials');
       }
@@ -83,7 +83,7 @@ function addNewUser(socket, username,password) {
   db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
     if (err) {
       console.error(err.message);
-      socket.send(err.message);
+      socket.send('result|^|' + err.message + '|#|action|^|registerNewUser');
     } else {
       const userDb = createNewUserDatabase(username, id);
       db[id] = userDb;
@@ -91,7 +91,7 @@ function addNewUser(socket, username,password) {
       addNewTransactionsTable(username,id);
       addNewInvoicesTable(username,id);
 
-      socket.send('Registration successful');
+      socket.send(`result|^|OK|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUserName|^|${username}`);
       console.log(`New user with username '${username}' and ID '${id}' has been added to the database.`);
     }
   });
