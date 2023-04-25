@@ -16,7 +16,7 @@ function handleMessage(socket, message) {
     var t = data[i].split('|^|');
     const identifier = t[0];
     const value = t[1];
-    console.log(data);
+    console.log(data[i]);
     switch(identifier){
       case 'userid':
         userId = value;
