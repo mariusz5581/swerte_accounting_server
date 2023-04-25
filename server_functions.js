@@ -62,7 +62,7 @@ function handleMessage(socket, message) {
         addNewUser(socket, t.registeredUsername, t.password);
     break;
     case 'getTransactions':
-        sendAllTransactions(socket, t.registeredUsername);
+        sendAllTransactions(socket, t);
     break;
     case 'add_new_transaction':
         addNewTransaction(socket,t, data);
@@ -116,10 +116,10 @@ function addNewUser(socket, username,password) {
   });
 }
 
-function sendAllTransactions(socket, username) {
-  var table_name = `${username}_transactions`;
+function sendAllTransactions(socket, t) {
+  var table_name = `${t.registeredUsername}_transactions`;
   var db_cmd = `SELECT * FROM ${table_name}`;
-  db.all(db_cmd, (err, rows) => {
+  db[t.user.registeredUserId].all(db_cmd, (err, rows) => {
     if (err) {
       console.error(err.message);
       socket.send('Error while fetching transactions');
