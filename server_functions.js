@@ -79,7 +79,7 @@ function login(socket, username, password) {
 function addNewUser(socket, username,password) {
   
   const id = db.length;
-  db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id, username, password], function (err) {
+  db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
     if (err) {
       console.error(err.message);
       socket.send(err.message);
