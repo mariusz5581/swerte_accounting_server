@@ -1,6 +1,6 @@
 //this is database_handling.js
 const sqlite3 = require('sqlite3').verbose();
-const db_users = new sqlite3.Database('users.db', (err) => {
+const users = new sqlite3.Database('users.db', (err) => {
   if (err) {
     console.error(err.message);
   }
@@ -22,7 +22,7 @@ function createNewUserDatabase(username, userId) {
 }
 
 db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users_credentials_tab (
+  db.run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
@@ -82,7 +82,7 @@ function addNewInvoicesTable(username){
 }
 
 db.serialize(() => {
-    db.all(`SELECT * FROM users_credentials_tab`, (err, rows) => {
+    db.all(`SELECT * FROM users`, (err, rows) => {
       if (err) {
         console.error(err.message);
       } else {
@@ -92,7 +92,7 @@ db.serialize(() => {
   });
   
   module.exports = {
-    db_users: db_users,
+    users: users,
     db: db,
     createNewUserDatabase: createNewUserDatabase,
     addNewAccountingTable: addNewTransactionsTable,
