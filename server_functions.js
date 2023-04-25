@@ -7,20 +7,34 @@ function handleMessage(socket, message) {
   var userId = '';
   var action = '';
 
-  var username = '';
+  var registeredUsername = '';
   var password = '';
+  var registeredUserId = '';
+
 
   for(var i = 0;i<data.length;i++){
     var t = data[i].split('|^|');
     const identifier = t[0];
     const value = t[1];
     console.log(data);
-    switch(t[0]){
+    switch(identifier){
       case 'userid':
         userId = value;
         break;
       case 'action':
         action = value;
+        break;
+      case 'registeredUserId':
+        registeredUserId = value;
+        break;
+      case 'registeredUsername':
+        registeredUsername = value;
+        break;
+      case 'password':
+        password = value;
+        break;
+      default:
+        console.log('data:'+ data);
         break;
     }
   }
