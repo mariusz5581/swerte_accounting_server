@@ -92,21 +92,20 @@ function login(socket, username, password) {
 
 function addNewUser(socket, username,password) {
   
-  const id = createNewUserDatabase(username,db.length);
+  const id = db.length;
   db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id, username, password], function (err) {
     if (err) {
       console.error(err.message);
       socket.send(err.message);
     } else {
-      const userId = this.lastID;
-      const userDb = createNewUserDatabase(username, userId);
-      db[userId] = userDb;
+      const userDb = createNewUserDatabase(username, id);
+      db[id] = userDb;
 
       addNewAccountingTable(userDb, username);
       addNewInvoicesTable(userDb, username);
 
       socket.send('Registration successful');
-      console.log(`New user with username '${username}' and ID '${userId}' has been added to the database.`);
+      console.log(`New user with username '${username}' and ID '${id}' has been added to the database.`);
     }
   });
 }
