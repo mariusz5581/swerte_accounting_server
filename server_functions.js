@@ -30,10 +30,10 @@ function handleMessage(socket, message) {
   
 
   for(var i = 0;i<data.length;i++){
-    var t = data[i].split('|^|');
-    const identifier = t[0];
-    const value = t[1];
-    console.log(data[i]);
+    var d = data[i].split('|^|');
+    const identifier = d[0];
+    const value = d[1];
+    console.log(d);
     switch(identifier){
       case 'action':
         t.action = value;
