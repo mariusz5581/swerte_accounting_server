@@ -84,7 +84,7 @@ function addNewInvoicesTable(username, UserId){
 }
 
 db[0].serialize(() => {
-    db.all(`SELECT * FROM users`, (err, rows) => {
+    db[0].all(`SELECT * FROM users`, (err, rows) => {
       if (err) {
         console.error(err.message);
       } else {
