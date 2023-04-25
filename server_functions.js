@@ -3,37 +3,52 @@ const { db, addNewAccountingTable, addNewInvoicesTable } = require('./database_h
 
 function handleMessage(socket, message) {
   const data = message.split('|#|');
-  const action = data[0];
+  var userId = '';
+  var action = '';
 
   var username = '';
   var password = '';
 
+  for(var i = 0;i<message.length;i++){
+    var t = message[i].split('|^|');
+    const identifier = t[0];
+    const value = t[1];
+    switch(t[0]){
+      case 'userid':
+        userId = value;
+        break;
+      case 'action':
+        action = value;
+    }
+  }
+
   
   switch (action) {
     case 'login':
-        username = data[1];
-        password = data[2];
+        username = data[2];
+        password = data[3];
         login(socket, username, password);
     break;
     case 'register':
-        username = data[1];
-        password = data[2];
+        username = data[2];
+        password = data[3];
         addNewUser(socket, username, password);
     break;
     case 'get_transactions':
-        username = data[1];
+        username = data[2];
         sendAllTransactions(socket, username);
     break;
     case 'add_new_transaction':
-        username = data[1];
+        username = data[2];
         addNewTransaction(socket,username, data);
     break;
     case 'update_transaction':
+        username = data[2];
         updateTransaction(socket, username, data);
     break;
     case 'delete_transaction':
-        var username = data[1];
-        var id = data[2];
+        var username = data[2];
+        var id = data[3];
         deleteTransaction(socket, username, id);
     break;
 
