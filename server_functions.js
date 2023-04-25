@@ -42,7 +42,7 @@ function handleMessage(socket, message) {
     case 'register':
         addNewUser(socket, registeredUsername, password);
     break;
-    case 'get_transactions':
+    case 'getTransactions':
         sendAllTransactions(socket, registeredUsername);
     break;
     case 'add_new_transaction':
@@ -117,7 +117,7 @@ function sendAllTransactions(socket, username){
               row.from_account,
               row.to_account,
               row.note
-            ].join('|#|');
+            ].join('|&|');
           }).join('|@|');
           transactions.slice(0,transactions.length-7);
           console.log('sendAllTransactions:');
