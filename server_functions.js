@@ -61,19 +61,20 @@ function handleMessage(socket, message) {
 }
 
 function login(socket, username, password) {
-    var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
-    db[0].get(db_cmd, [id, username, password], (err, row) => {
-      if (err) {
-        console.error(err.message);
-        socket.send('Error while attempting to verify user');
+  var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
+  db[0].get(db_cmd, [username, password], (err, row) => {
+    if (err) {
+      console.error(err.message);
+      socket.send('Error while attempting to verify user');
+    } else {
+      if (row) {
+        // When username and password match, send the user ID along with the success message
+        socket.send(`Login successful|#|registeredUserId|^|${row.id}`);
       } else {
-        if (row['username'] == username && row['password'] == password) {
-          socket.send('Login successful');
-        } else {
-          socket.send('Invalid credentials');
-        }
+        socket.send('Invalid credentials');
       }
-    });
+    }
+  });
 }
 
 function addNewUser(socket, username,password) {
