@@ -54,6 +54,38 @@ function initializeUserDatabase() {
       });
     }
   });
+}
+
+function addNewUserToDatabase(username, password) {
+  db[0].run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, password], function (err) {
+    if (err) {
+      return err;
+    } else {
+      var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
+      db[0].get(db_cmd, [username, password], (err, row) => {
+        if (err) {
+          console.error(err.message);
+          return err.message;
+        } else {
+          let _db = new sqlite3.Database(`${row.id}.db`, (err) => {
+            if (err) {
+              console.error(err.message);
+              return err.message;
+            } else {
+              console.log(`Connected to the ${row.id}.db database.`);
+              setTables(row.id);
+            }
+          });
+
+          db.push(_db);
+        }
+      });
+    }
+  });
+  return 'OK';
+}
+  
+  
   
   // Close the connection to the users.db file
   /*dbUsers.close((err) => {
@@ -62,7 +94,7 @@ function initializeUserDatabase() {
     }
     console.log('Connection to the users.db database closed.');
   });*/
-}
+
 
 function setTables(userId){
   setTransactionTable(userId);
@@ -185,6 +217,6 @@ function setProductsTable(userId){
   
   module.exports = {
     db: db,
-    addNewTransactionsTable: addNewTransactionsTable,
-    addNewInvoicesTable: addNewInvoicesTable,
+    setTables: setTables,
+    addNewUserToDatabase: addNewUserToDatabase
   };

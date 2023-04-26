@@ -1,5 +1,5 @@
 //this is server_functions.js
-const { db, createNewUserDatabase, addNewTransactionsTable, addNewInvoicesTable } = require('./database_handling');
+const { db, createNewUserDatabase, setTables, addNewUserToDatabase} = require('./database_handling');
 
 class Data{
   user = new UserData();
@@ -56,11 +56,11 @@ function handleMessage(socket, message) {
 
   
   switch (t.user.action) {
-    case 'login':
-        login(socket, t.registeredUsername, t.user.password);
+    case 'login_user':
+        loginUser(socket, t.user.registeredUsername, t.user.password);
     break;
-    case 'register':
-        addNewUser(socket, t.registeredUsername, t.user.password);
+    case 'register_new_user':
+        registerNewUser(socket, t.user.registeredUsername, t.user.password);
     break;
     case 'getTransactions':
         sendAllTransactions(socket, t);
@@ -80,7 +80,7 @@ function handleMessage(socket, message) {
     }
 }
 
-function login(socket, username, password) {
+function loginUser(socket, username, password) {
   var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
   db[0].get(db_cmd, [username, password], (err, row) => {
     if (err) {
@@ -97,19 +97,21 @@ function login(socket, username, password) {
   });
 }
 
-function addNewUser(socket, username,password) {
-  
+function registerNewUser(socket, username,password) {
+  addNewUserToDatabase();
   const id = db.length;
   db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
     if (err) {
       console.error(err.message);
       socket.send('result|^|' + err.message + '|#|action|^|registerNewUser');
     } else {
-      const userDb = createNewUserDatabase(username, id);
-      db[id] = userDb;
+      const result = setTables(id, username,password);
+      if(result != 'OK'){
+        console.error(result);
+        socket.send('result|^|' + result + '|#|action|^|registerNewUser');  
+      }else {
 
-      addNewTransactionsTable(username,id);
-      addNewInvoicesTable(username,id);
+      }
 
       socket.send(`result|^|OK|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUserName|^|${username}`);
       console.log(`New user with username '${username}' and ID '${id}' has been added to the database.`);
