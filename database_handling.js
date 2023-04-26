@@ -42,54 +42,15 @@ function initializeUserDatabase() {
     } else {
       // Iterate through users and create a new _transactions.db file for each user
       rows.forEach((row) => {
-        let dbName = `${row.id}.db`;
-        let dbTransactions = new sqlite3.Database(dbName, (err) => {
+        let _db = new sqlite3.Database(`${row.id}.db`, (err) => {
           if (err) {
             console.error(err.message);
           }
-          console.log(`Connected to the ${dbName} database.`);
-  
-          // Create transactions table for the user
-          dbTransactions.run(
-            `CREATE TABLE IF NOT EXISTS transactions (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              date TEXT,
-              category TEXT,
-              title TEXT,
-              ammount_base REAL,
-              ammount_percent_tax REAL,
-              ammount_tax REAL,
-              from_account TEXT,
-              to_account TEXT,
-              note TEXT
-            )`,
-            (err) => {
-              if (err) {
-                console.error(err.message);
-              } else {
-                console.log(`Transactions table created for user ${row.username}.`);
-              }
-            }
-          );
+          console.log(`Connected to the ${row.id}.db database.`);
         });
-  
-        // Close the connection to the _transactions.db file
-        /*dbTransactions.close((err) => {
-          if (err) {
-            console.error(err.message);
-          }
-          console.log(`Connection to the ${dbName} database closed.`);
-        });*/
-        dbTransactions.serialize(() => {
-          dbTransactions.all(`SELECT * FROM transactions`, (err, rows) => {
-            if (err) {
-              console.error(err.message);
-            } else {
-              console.log(rows);
-            }
-          });
-        });
-        db.push(dbTransactions);
+
+        db.push(_db);
+        setTables(row.id);
       });
     }
   });
@@ -103,9 +64,17 @@ function initializeUserDatabase() {
   });*/
 }
 
-function addNewTransactionsTable(username, userId){
+function setTables(userId){
+  setTransactionTable(userId);
+  setAccountingAccountsTable(userId);
+  setClientsTable(userId);
+  setInvoicesTable(userId);
+  setProductsTable(userId);
+}
+
+function setTransactionTable(userId){
     db[userId].serialize(() => {
-    db[userId].run(`CREATE TABLE IF NOT EXISTS ${username}_transactions (
+    db[userId].run(`CREATE TABLE IF NOT EXISTS transactions (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
               category TEXT NOT NULL,
@@ -126,9 +95,29 @@ function addNewTransactionsTable(username, userId){
   });
 }
 
-function addNewInvoicesTable(username, userId){
+function setAccountingAccountsTable(userId){
+  db[userId].serialize(() => {
+  db[userId].run(`CREATE TABLE IF NOT EXISTS accounting_accounts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            code TEXT NOT NULL,
+            name TEXT NOT NULL,
+            date TEXT NOT NULL,
+            category TEXT NOT NULL,
+            tags TEXT,
+            note TEXT
+          )`, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log('Users table created or already exists.');
+    }
+  });
+});
+}
+
+function setInvoicesTable(userId){
     db[userId].serialize(() => {
-    db[userId].run(`CREATE TABLE IF NOT EXISTS ${username}_invoices (
+    db[userId].run(`CREATE TABLE IF NOT EXISTS invoices (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               date TEXT NOT NULL,
               category TEXT NOT NULL,
@@ -136,8 +125,9 @@ function addNewInvoicesTable(username, userId){
               ammount_base TEXT NOT NULL,
               ammount_percent_tax TEXT NOT NULL,
               ammount_tax TEXT NOT NULL,
-              from_account TEXT NOT NULL,
-              to_account TEXT NOT NULL,
+              client_id TEXT NOT NULL,
+              product_id TEXT NOT NULL,
+              tags TEXT,
               note TEXT
             )`, (err) => {
       if (err) {
@@ -149,6 +139,48 @@ function addNewInvoicesTable(username, userId){
   });
 }
 
+function setClientsTable(userId){
+  db[userId].serialize(() => {
+  db[userId].run(`CREATE TABLE IF NOT EXISTS clients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            category TEXT NOT NULL,
+            name TEXT NOT NULL,
+            address TEXT NOT NULL,
+            bank_account_number TEXT NOT NULL,
+            email_address TEXT NOT NULL,
+            tags TEXT,
+            note TEXT
+          )`, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log('Users table created or already exists.');
+    }
+  });
+});
+}
+
+function setProductsTable(userId){
+  db[userId].serialize(() => {
+  db[userId].run(`CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            category TEXT NOT NULL,
+            name TEXT NOT NULL,
+            tax_percent TEXT NOT NULL,
+            price TEXT,
+            tags TEXT,
+            note TEXT
+          )`, (err) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log('Users table created or already exists.');
+    }
+  });
+});
+}
 
   
   module.exports = {
