@@ -89,7 +89,7 @@ function initializeUserDatabase() {
             }
           });
         });
-        db.add(dbTransactions);
+        db.push(dbTransactions);
       });
     }
   });
