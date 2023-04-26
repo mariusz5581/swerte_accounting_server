@@ -117,8 +117,17 @@ function addNewUser(socket, username,password) {
 }
 
 function sendAllTransactions(socket, t) {
-  var table_name = `${t.registeredUsername}_transactions`;
+  var table_name = `transactions`;
   var db_cmd = `SELECT * FROM ${table_name}`;
+  console.log('db.length:----------------------------------');
+  console.log(db.length);
+  console.log('t:----------------------------------');
+  console.log(t);
+  console.log('t.user:----------------------------------');
+  console.log(t.user);
+  console.log('t.user.registeredUserId:----------------------------------');
+  console.log(t.user.registeredUserId);
+
   db[t.user.registeredUserId].all(db_cmd, (err, rows) => {
     if (err) {
       console.error(err.message);
