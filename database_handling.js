@@ -42,7 +42,7 @@ function initializeUserDatabase() {
     } else {
       // Iterate through users and create a new _transactions.db file for each user
       rows.forEach((row) => {
-        let dbName = `${row.username}.db`;
+        let dbName = `${row.id}.db`;
         let dbTransactions = new sqlite3.Database(dbName, (err) => {
           if (err) {
             console.error(err.message);
@@ -81,7 +81,7 @@ function initializeUserDatabase() {
           console.log(`Connection to the ${dbName} database closed.`);
         });*/
         dbTransactions.serialize(() => {
-          db[0].all(`SELECT * FROM transactions`, (err, rows) => {
+          dbTransactions.all(`SELECT * FROM transactions`, (err, rows) => {
             if (err) {
               console.error(err.message);
             } else {
