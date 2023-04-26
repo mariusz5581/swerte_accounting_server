@@ -7,6 +7,7 @@ class Data{
 }
 
 class TransactionData{
+  id = '';
   date = '';
   title = '';
   catergory = '';
@@ -36,16 +37,16 @@ function handleMessage(socket, message) {
     console.log(d);
     switch(identifier){
       case 'action':
-        t.action = value;
+        t.user.action = value;
         break;
       case 'registeredUserId':
-        t.registeredUserId = value;
+        t.user.registeredUserId = value;
         break;
       case 'registeredUsername':
-        t.registeredUsername = value;
+        t.user.registeredUsername = value;
         break;
       case 'password':
-        t.password = value;
+        t.user.password = value;
         break;
       default:
         console.log('data:'+ data);
@@ -54,12 +55,12 @@ function handleMessage(socket, message) {
   }
 
   
-  switch (t.action) {
+  switch (t.user.action) {
     case 'login':
-        login(socket, t.registeredUsername, t.password);
+        login(socket, t.registeredUsername, t.user.password);
     break;
     case 'register':
-        addNewUser(socket, t.registeredUsername, t.password);
+        addNewUser(socket, t.registeredUsername, t.user.password);
     break;
     case 'getTransactions':
         sendAllTransactions(socket, t);
@@ -68,10 +69,10 @@ function handleMessage(socket, message) {
         addNewTransaction(socket,t, data);
     break;
     case 'update_transaction':
-        updateTransaction(socket, t.registeredUsername, data);
+        updateTransaction(socket, t.user.registeredUsername, data);
     break;
     case 'delete_transaction':
-        deleteTransaction(socket, t.registeredUsername, t.id);
+        deleteTransaction(socket, t.registeredUsername, t.transaction.id);
     break;
 
     default:
