@@ -91,7 +91,7 @@ function loginUser(socket, username, password) {
       socket.send('Error while attempting to verify user');
     } else {
       if (row) {
-        userTablePermissions(row.id, (err, userPermissions) => {
+        userTablePermissions(row.id, username, (err, userPermissions) => {
           if (err) {
             console.error(err);
           } else {
@@ -108,7 +108,7 @@ function loginUser(socket, username, password) {
   });
 }
 
-function userTablePermissions(id, callback) {
+function userTablePermissions(id, username, callback) {
   var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
   db[0].get(db_cmd, [id], (err, row) => {
     if (err) {
@@ -118,7 +118,7 @@ function userTablePermissions(id, callback) {
       console.log('id:' + id);
       if (row) {
         // Send the user ID, table IDs
-        var result = row.table_ids + '|!|' + row.permission_levels;
+        var result = `${row.username}|!|row.table_ids|!|row.permission_levels`;
         console.log('row result:' + result);
         callback(null, result);
       } else {
@@ -150,7 +150,7 @@ function registerNewUser(socket, username, password) {
       console.error(err.message);
     } else {
       const permissionLevels = 'admin';
-      db[0].run(`INSERT INTO user_table_permissions (id, table_ids, user_id, permission_levels) VALUES (?, ?, ?, ?)`, [id.toString(), id.toString(), id.toString(), permissionLevels], function (err) {
+      db[0].run(`INSERT INTO user_table_permissions (id, table_ids, user_id, username, permission_levels) VALUES (?, ?, ?, ?, ?)`, [id.toString(), id.toString(), id.toString(),username, permissionLevels], function (err) {
         if (err) {
           console.error('user_table_permissions' + err.message);
           return;
