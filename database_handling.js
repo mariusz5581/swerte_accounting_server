@@ -41,6 +41,7 @@ function initializeUserDatabase() {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               table_ids INTEGER NOT NULL,
               user_id INTEGER NOT NULL,
+              username TEXT NOT NULL,
               permission_levels TEXT NOT NULL
             )`, (err) => {
       if (err) {
