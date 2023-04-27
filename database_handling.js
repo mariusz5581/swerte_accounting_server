@@ -50,6 +50,7 @@ function initializeUserDatabase() {
         });
 
         db.push(_db);
+        console.log('index of _db:' + db.indexOf(_db) + ' and row.id:' + row.id + ' must match');
         setTables(row.id);
       });
     }
