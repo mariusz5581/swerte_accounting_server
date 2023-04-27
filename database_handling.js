@@ -41,6 +41,8 @@ function initializeUserDatabase() {
       console.error(err.message);
     } else {
       // Iterate through users and create a new _transactions.db file for each user
+      console.log('rows:');
+      console.log(rows);
       rows.forEach((row) => {
         let _db = new sqlite3.Database(`${row.id}.db`, (err) => {
           if (err) {
