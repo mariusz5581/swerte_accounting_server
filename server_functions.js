@@ -35,9 +35,9 @@ function handleMessage(socket, message) {
     const identifier = d[0];
     const value = d[1];
     
-    console.log('Processed revied data:');
-    console.log(d);
-    console.log('----------------------');
+    //console.log('Processed revied data:');
+    //console.log(d);
+    //console.log('----------------------');
     switch(identifier){
       case 'action':
         t.user.action = value;
@@ -91,8 +91,8 @@ function loginUser(socket, username, password) {
       socket.send('Error while attempting to verify user');
     } else {
       if (row) {
-        // When username and password match, send the user ID along with the success message
-        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}`);
+        // Send the user ID, table IDs, and success message
+        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}|#|tableIds|^|${row.table_ids}`);
       } else {
         socket.send('Invalid credentials');
       }
@@ -100,19 +100,29 @@ function loginUser(socket, username, password) {
   });
 }
 
-function registerNewUser(socket, username,password) {
+
+function registerNewUser(socket, username, password) {
   const id = db.length;
   var result = '';
-  db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
+
+  // Add default table ID for the new user
+  const defaultTableId = `transactions_${id}`;
+
+  // Update this line
+  // db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
+
+  // To include the table_ids column
+  db[0].run(`INSERT INTO users (id, username, password, table_ids) VALUES (?, ?, ?, ?)`, [id.toString(), username, password, defaultTableId], function (err) {
     if (err) {
       console.error(err.message);
     } else {
-      result = addNewUserToDatabase(username,password);
-      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}`);
+      result = addNewUserToDatabase(username, password);
+      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}|#|tableIds|^|${defaultTableId}`);
       console.log(`New user with username '${username}' and ID '${id}', result is ${result}`);
     }
   });
 }
+
 
 function sendAllTransactions(socket, t) {
   var table_name = `transactions`;
@@ -121,10 +131,6 @@ function sendAllTransactions(socket, t) {
   console.log(db.length);
   console.log('t:----------------------------------');
   console.log(t);
-  console.log('t.user:----------------------------------');
-  console.log(t.user);
-  console.log('t.user.registeredUserId:----------------------------------');
-  console.log(t.user.registeredUserId);
 
   db[t.user.registeredUserId].all(db_cmd, (err, rows) => {
     if (err) {
@@ -154,38 +160,9 @@ function sendAllTransactions(socket, t) {
 }
 
 
-function sendAllTransactions_OLD(socket, username){
-  var table_name = `${username}_transactions`;
-  var db_cmd = `SELECT * FROM ${table_name}`;
-  db.all(db_cmd, (err, rows) => {
-      if (err) {
-        console.error(err.message);
-        socket.send('Error while fetching transactions');
-      } else {
-        var transactions = rows.map(row => {
-          return [
-            row.id,
-            row.date,
-            row.category,
-            row.title,
-            row.ammount_base,
-            row.ammount_percent_tax,
-            row.ammount_tax,
-            row.from_account,
-            row.to_account,
-            row.note
-          ].join('|&|');
-        }).join('|@|');
-        transactions.slice(0,transactions.length-7);
-        console.log('sendAllTransactions:');
-        console.log(JSON.stringify(transactions))
-        socket.send(transactions);
-      }
-    });
-}
-
-function addNewTransaction(socket, username, data){
-    username = data[1];
+function addNewTransaction(socket, t, data){
+  var result = 'OK';  
+  username = data[1];
         var date = data[2];
         var category = data[3];
         var title = data[4];
@@ -196,18 +173,20 @@ function addNewTransaction(socket, username, data){
         var to_account = data[9];
         var note = data[10];
         
-        var table_name = `${username}_transactions`;
+        var table_name = `transactions`;
         var sql = `INSERT INTO ${table_name} (date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         var values = [date, category, title, ammount_base, ammount_percent_tax, ammount_tax, from_account, to_account, note];
         
-        db.run(sql, values, (err) => {
+        db[t.user.registeredUserId].run(sql, values, (err) => {
             if (err) {
-                console.error(err.message);
-                socket.send('Error while adding transaction');
+              result = err.message;
+                console.error(result);
+                socket.send(result);
             } else {
-      console.log(`New transaction added to ${table_name}`);
-      socket.send('Transaction added');
+      console.log(`New transaction added to transactions`);
+      socket.send(`result|^|${result}|#|action|^|addTransaction|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}`);
+
     }
   });
 }

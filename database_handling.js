@@ -16,7 +16,8 @@ function initializeUserDatabase() {
     db[0].run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            table_ids TEXT NOT NULL
           )`, (err) => {
       if (err) {
         console.error(err.message);
@@ -112,7 +113,6 @@ function setTransactionTable(userId){
     db[userId].serialize(() => {
     db[userId].run(`CREATE TABLE IF NOT EXISTS transactions (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              date TEXT NOT NULL,
               category TEXT NOT NULL,
               title TEXT NOT NULL,
               ammount_base TEXT NOT NULL,
@@ -120,6 +120,10 @@ function setTransactionTable(userId){
               ammount_tax TEXT NOT NULL,
               from_account TEXT NOT NULL,
               to_account TEXT NOT NULL,
+              creation_date TEXT NOT NULL,
+              created_by_user TEXT NOT NULL,
+              modifications_date TEXT,
+              modified_by_users TEXT,
               note TEXT
             )`, (err) => {
       if (err) {
