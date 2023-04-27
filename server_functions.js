@@ -107,7 +107,7 @@ function userTablePermissions(id) {
   var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
   db[0].get(db_cmd, [id], (err, row) => {
     if (err) {
-      console.error(err.message);
+      console.error('searching for id:' + id.toString()+ ' ' + err.message);
       socket.send('Error while attempting to verify user');
     } else {
 
