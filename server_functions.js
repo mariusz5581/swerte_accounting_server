@@ -110,7 +110,7 @@ function userTablePermissions(id) {
       console.error('searching for id:' + id.toString()+ ' ' + err.message);
       socket.send('Error while attempting to verify user');
     } else {
-
+      console.log('id:' + id);
       if (row) {
         // Send the user ID, table IDs
         result = `tableIds|^|${row.table_ids}|#|permissionsLevel|^|${row.permissions_level}`;
