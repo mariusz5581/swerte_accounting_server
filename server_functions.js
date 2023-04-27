@@ -84,21 +84,46 @@ function handleMessage(socket, message) {
 }
 
 function loginUser(socket, username, password) {
-  var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
-  db[0].get(db_cmd, [username, password], (err, row) => {
+  var db_cmd = 'SELECT * FROM users WHERE id = ? AND username = ? AND password = ?';
+  db[0].get(db_cmd, [id, username, password], (err, row) => {
     if (err) {
       console.error(err.message);
       socket.send('Error while attempting to verify user');
     } else {
+      const usersPermissions = userTablePermissions(id);
       if (row) {
         // Send the user ID, table IDs, and success message
-        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}|#|tableIds|^|${row.table_ids}`);
+        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}|#|usersPermissions|^|${usersPermissions}`);
       } else {
         socket.send('Invalid credentials');
       }
     }
   });
 }
+
+function userTablePermissions(socket, id) {
+  var result ='';
+  var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
+  db[0].get(db_cmd, [id], (err, row) => {
+    if (err) {
+      console.error(err.message);
+      socket.send('Error while attempting to verify user');
+    } else {
+
+      if (row) {
+        // Send the user ID, table IDs
+        result = `tableIds|^|${row.table_ids}|#|permissionsLevel|^|${row.permissions_level}`;
+      } else {
+        console.err('ERR:userTablePermissions: no match');
+      }
+      return result;
+    }
+  });
+}
+
+
+
+
 
 
 function registerNewUser(socket, username, password) {

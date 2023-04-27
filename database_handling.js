@@ -39,9 +39,9 @@ function initializeUserDatabase() {
   db[0].serialize(() => {
     db[0].run(`CREATE TABLE IF NOT EXISTS user_table_permissions (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              table_id INTEGER NOT NULL,
+              table_ids INTEGER NOT NULL,
               user_id INTEGER NOT NULL,
-              permission_level TEXT NOT NULL
+              permission_levels TEXT NOT NULL
             )`, (err) => {
       if (err) {
         console.error(err.message);
