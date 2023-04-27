@@ -91,7 +91,7 @@ function loginUser(socket, username, password) {
       socket.send('Error while attempting to verify user');
     } else {
       if (row) {
-        const userPermissions = userTablePermissions(row.id);
+        var userPermissions = userTablePermissions(row.id);
         console.log('userPermissions:' + userPermissions);
 
         // Send the user ID, table IDs, and success message
