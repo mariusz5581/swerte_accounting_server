@@ -141,6 +141,12 @@ function registerNewUser(socket, username, password) {
     if (err) {
       console.error(err.message);
     } else {
+      const permission_levels = 'admin';
+      db[0].run(`INSERT INTO user_table_permissions (id, id, id, permission_levels) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
+        if (err) {
+          console.error(err.message);
+          return;
+        } });
       result = addNewUserToDatabase(username, password);
       socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}`);
       console.log(`New user with username '${username}' and ID '${id}', result is ${result}`);
