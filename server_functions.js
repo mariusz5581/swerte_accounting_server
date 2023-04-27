@@ -118,7 +118,7 @@ function userTablePermissions(id, username, callback) {
       console.log('id:' + id);
       if (row) {
         // Send the user ID, table IDs
-        var result = `${row.username}|!|row.table_ids|!|row.permission_levels`;
+        var result = `${row.username}|!|${row.table_ids}|!|${row.permission_levels}`;
         console.log('row result:' + result);
         callback(null, result);
       } else {
