@@ -16,8 +16,7 @@ function initializeUserDatabase() {
     db[0].run(`CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            table_ids TEXT NOT NULL
+            password TEXT NOT NULL
           )`, (err) => {
       if (err) {
         console.error(err.message);
@@ -40,14 +39,24 @@ function initializeUserDatabase() {
   db[0].serialize(() => {
     db[0].run(`CREATE TABLE IF NOT EXISTS user_table_permissions (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              user_id INTEGER NOT NULL,
               table_id INTEGER NOT NULL,
+              user_id INTEGER NOT NULL,
               permission_level TEXT NOT NULL
             )`, (err) => {
       if (err) {
         console.error(err.message);
       } else {
-        console.log('User table permissions created or already exists.');
+        console.log('user_table_permissions created or already exists.');
+      }
+    });
+  });
+
+  db[0].serialize(() => {
+    db[0].all(`SELECT * FROM user_table_permissions`, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(rows);
       }
     });
   });
@@ -145,7 +154,17 @@ function setTransactionTable(userId){
       if (err) {
         console.error(err.message);
       } else {
-        console.log('Users table created or already exists.');
+        console.log('transactions created or already exists.');
+      }
+    });
+  });
+
+  db[userId].serialize(() => {
+    db[userId].all(`SELECT * FROM transactions`, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(rows);
       }
     });
   });
@@ -165,7 +184,17 @@ function setAccountingAccountsTable(userId){
     if (err) {
       console.error(err.message);
     } else {
-      console.log('Users table created or already exists.');
+      console.log('accounting_accounts created or already exists.');
+    }
+  });
+});
+
+db[userId].serialize(() => {
+  db[userId].all(`SELECT * FROM accounting_accounts`, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log(rows);
     }
   });
 });
@@ -189,7 +218,17 @@ function setInvoicesTable(userId){
       if (err) {
         console.error(err.message);
       } else {
-        console.log('Users table created or already exists.');
+        console.log('invoices created or already exists.');
+      }
+    });
+  });
+
+  db[userId].serialize(() => {
+    db[userId].all(`SELECT * FROM invoices`, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log(rows);
       }
     });
   });
@@ -211,7 +250,17 @@ function setClientsTable(userId){
     if (err) {
       console.error(err.message);
     } else {
-      console.log('Users table created or already exists.');
+      console.log('clients created or already exists.');
+    }
+  });
+});
+
+db[userId].serialize(() => {
+  db[userId].all(`SELECT * FROM clients`, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log(rows);
     }
   });
 });
@@ -232,7 +281,17 @@ function setProductsTable(userId){
     if (err) {
       console.error(err.message);
     } else {
-      console.log('Users table created or already exists.');
+      console.log('products created or already exists.');
+    }
+  });
+});
+
+db[userId].serialize(() => {
+  db[userId].all(`SELECT * FROM products`, (err, rows) => {
+    if (err) {
+      console.error(err.message);
+    } else {
+      console.log(rows);
     }
   });
 });
