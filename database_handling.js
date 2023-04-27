@@ -66,19 +66,19 @@ function addNewUserToDatabase(username, password) {
         if (err) {
           console.error(err.message);
           return err.message;
-        } else {
-          let _db = new sqlite3.Database(`${row.id}.db`, (err) => {
-            if (err) {
-              console.error(err.message);
-              return err.message;
-            } else {
-              console.log(`Connected to the ${row.id}.db database.`);
-              setTables(row.id);
-            }
-          });
+        } 
+        let _db = new sqlite3.Database(`${row.id}.db`, (err) => {
+          if (err) {
+            console.error(err.message);
+            return err.message;
+          }
+          console.log(`Connected to the ${row.id}.db database.`);
+          db[row.id] =_db;
+          setTables(row.id);
+          
+        });
 
-          db.push(_db);
-        }
+        
       });
     }
   });

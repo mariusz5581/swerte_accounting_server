@@ -34,7 +34,10 @@ function handleMessage(socket, message) {
     var d = data[i].split('|^|');
     const identifier = d[0];
     const value = d[1];
+    
+    console.log('Processed revied data:');
     console.log(d);
+    console.log('----------------------');
     switch(identifier){
       case 'action':
         t.user.action = value;
@@ -49,7 +52,7 @@ function handleMessage(socket, message) {
         t.user.password = value;
         break;
       default:
-        console.log('data:'+ data);
+        console.log('ERR: unknown identifier:' + identifier);
         break;
     }
   }
@@ -98,23 +101,15 @@ function loginUser(socket, username, password) {
 }
 
 function registerNewUser(socket, username,password) {
-  addNewUserToDatabase();
   const id = db.length;
+  var result = '';
   db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
     if (err) {
       console.error(err.message);
-      socket.send('result|^|' + err.message + '|#|action|^|registerNewUser');
     } else {
-      const result = setTables(id, username,password);
-      if(result != 'OK'){
-        console.error(result);
-        socket.send('result|^|' + result + '|#|action|^|registerNewUser');  
-      }else {
-
-      }
-
-      socket.send(`result|^|OK|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUserName|^|${username}`);
-      console.log(`New user with username '${username}' and ID '${id}' has been added to the database.`);
+      result = addNewUserToDatabase(username,password);
+      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUserName|^|${username}`);
+      console.log(`New user with username '${username}' and ID '${id}', result is ${result}`);
     }
   });
 }
