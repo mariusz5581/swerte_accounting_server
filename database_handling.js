@@ -147,7 +147,7 @@ function setTransactionTable(userId){
               to_account TEXT NOT NULL,
               creation_date TEXT NOT NULL,
               created_by_user TEXT NOT NULL,
-              modifications_date TEXT,
+              modifications_dates TEXT,
               modified_by_users TEXT,
               note TEXT
             )`, (err) => {

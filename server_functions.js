@@ -106,18 +106,18 @@ function registerNewUser(socket, username, password) {
   var result = '';
 
   // Add default table ID for the new user
-  const defaultTableId = `transactions_${id}`;
+  const defaultTableId = `transactions`;
 
   // Update this line
   // db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
 
   // To include the table_ids column
-  db[0].run(`INSERT INTO users (id, username, password, table_ids) VALUES (?, ?, ?, ?)`, [id.toString(), username, password, defaultTableId], function (err) {
+  db[0].run(`INSERT INTO users (id, username, password) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
     if (err) {
       console.error(err.message);
     } else {
       result = addNewUserToDatabase(username, password);
-      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}|#|tableIds|^|${defaultTableId}`);
+      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}`);
       console.log(`New user with username '${username}' and ID '${id}', result is ${result}`);
     }
   });
@@ -140,7 +140,6 @@ function sendAllTransactions(socket, t) {
       var transactions = rows.map(row => {
         return [
           'transactionId|^|' + row.id,
-          'date|^|' + row.date,
           'category|^|' + row.category,
           'title|^|' + row.title,
           'baseAmount|^|' + row.ammount_base,
@@ -148,6 +147,10 @@ function sendAllTransactions(socket, t) {
           'amountOfTax|^|' + row.ammount_tax,
           'fromAccount|^|' + row.from_account,
           'toAccount|^|' + row.to_account,
+          'creationDate|^|' + row.creation_date,
+          'createdByUser|^|' + row.created_by_user,
+          'modificationDates|^|' + row.modifications_dates,
+          'modificationByUsers|^|' + row.modified_by_users,
           'note|^|' + row.note,
           'endOfTransaction|^|',
         ].join('|#|');});
