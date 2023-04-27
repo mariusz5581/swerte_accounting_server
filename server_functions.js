@@ -115,13 +115,14 @@ function userTablePermissions(id) {
       if (row) {
         // Send the user ID, table IDs
         result = `${row.table_ids}|!|${row.permission_levels}`;
+        console.log('row result:' + result);
       } else {
         console.error('ERR:userTablePermissions: no match');
       }
-      console.log('result:' + result);
-      return result;
     }
   });
+  console.log('result:' + result);
+  return result;
 }
 
 
