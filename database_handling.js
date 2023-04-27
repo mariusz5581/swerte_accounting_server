@@ -37,6 +37,22 @@ function initializeUserDatabase() {
     });
   });
 
+  db[0].serialize(() => {
+    db[0].run(`CREATE TABLE IF NOT EXISTS user_table_permissions (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER NOT NULL,
+              table_id INTEGER NOT NULL,
+              permission_level TEXT NOT NULL
+            )`, (err) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        console.log('User table permissions created or already exists.');
+      }
+    });
+  });
+  
+
   db[0].all('SELECT id, username FROM users', (err, rows) => {
     if (err) {
       console.error(err.message);
