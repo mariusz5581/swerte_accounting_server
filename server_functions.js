@@ -85,6 +85,7 @@ function handleMessage(socket, message) {
 
 function loginUser(socket, username, password) {
   var db_cmd = 'SELECT * FROM users WHERE id = ? AND username = ? AND password = ?';
+  const id = '';
   db[0].get(db_cmd, [id, username, password], (err, row) => {
     if (err) {
       console.error(err.message);
