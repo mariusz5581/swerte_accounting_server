@@ -144,7 +144,7 @@ function registerNewUser(socket, username, password) {
       const permissionLevels = 'admin';
       db[0].run(`INSERT INTO user_table_permissions (id, table_ids, user_id, permission_levels) VALUES (?, ?, ?, ?)`, [id.toString(), id.toString(), id.toString(), permissionLevels], function (err) {
         if (err) {
-          console.error(err.message);
+          console.error('user_table_permissions' + err.message);
           return;
         } });
       result = addNewUserToDatabase(username, password);
