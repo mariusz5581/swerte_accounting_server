@@ -91,11 +91,16 @@ function loginUser(socket, username, password) {
       socket.send('Error while attempting to verify user');
     } else {
       if (row) {
-        var userPermissions = userTablePermissions(row.id);
-        console.log('userPermissions:' + userPermissions);
+        userTablePermissions(row.id, (err, userPermissions) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log('userPermissions:' + userPermissions);
 
-        // Send the user ID, table IDs, and success message
-        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUsername|^|${username}|#|userPermissions|^|${userPermissions}`);
+            // Send the user ID, table IDs, and success message
+            socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUsername|^|${username}|#|userPermissions|^|${userPermissions}`);
+          }
+        });
       } else {
         socket.send('Invalid credentials');
       }
@@ -103,26 +108,25 @@ function loginUser(socket, username, password) {
   });
 }
 
-function userTablePermissions(id) {
-  var result = '';
+function userTablePermissions(id, callback) {
   var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
   db[0].get(db_cmd, [id], (err, row) => {
     if (err) {
       console.error('searching for id:' + id.toString()+ ' ' + err.message);
-      socket.send('Error while attempting to verify user');
+      callback(err);
     } else {
       console.log('id:' + id);
       if (row) {
         // Send the user ID, table IDs
-        result = row.table_ids + '|!|' + row.permission_levels;
+        var result = row.table_ids + '|!|' + row.permission_levels;
         console.log('row result:' + result);
+        callback(null, result);
       } else {
         console.error('ERR:userTablePermissions: no match');
+        callback('No match found');
       }
     }
   });
-  console.log('result:' + result);
-  return result;
 }
 
 
