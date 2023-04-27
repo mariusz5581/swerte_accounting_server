@@ -108,7 +108,7 @@ function registerNewUser(socket, username,password) {
       console.error(err.message);
     } else {
       result = addNewUserToDatabase(username,password);
-      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUserName|^|${username}`);
+      socket.send(`result|^|${result}|#|action|^|registerNewUser|#|registeredUserId|^|${id.toString()}|#|registeredUsername|^|${username}`);
       console.log(`New user with username '${username}' and ID '${id}', result is ${result}`);
     }
   });
