@@ -141,8 +141,8 @@ function registerNewUser(socket, username, password) {
     if (err) {
       console.error(err.message);
     } else {
-      const permission_levels = 'admin';
-      db[0].run(`INSERT INTO user_table_permissions (id, id, id, permission_levels) VALUES (?, ?, ?)`, [id.toString(), username, password], function (err) {
+      const permissionLevels = 'admin';
+      db[0].run(`INSERT INTO user_table_permissions (id, table_ids, user_id, permission_levels) VALUES (?, ?, ?, ?)`, [id.toString(), id.toString(), id.toString(), permissionLevels], function (err) {
         if (err) {
           console.error(err.message);
           return;
