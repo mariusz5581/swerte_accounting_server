@@ -84,15 +84,14 @@ function handleMessage(socket, message) {
 }
 
 function loginUser(socket, username, password) {
-  var db_cmd = 'SELECT * FROM users WHERE id = ? AND username = ? AND password = ?';
-  var id = '';
-  db[0].get(db_cmd, [id, username, password], (err, row) => {
+  var db_cmd = 'SELECT * FROM users WHERE username = ? AND password = ?';
+  db[0].get(db_cmd, [username, password], (err, row) => {
     if (err) {
       console.error(err.message);
       socket.send('Error while attempting to verify user');
     } else {
-      const usersPermissions = userTablePermissions(id);
       if (row) {
+        const usersPermissions = userTablePermissions(row.id);
         // Send the user ID, table IDs, and success message
         socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUserName|^|${username}|#|usersPermissions|^|${usersPermissions}`);
       } else {
