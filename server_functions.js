@@ -92,8 +92,10 @@ function loginUser(socket, username, password) {
     } else {
       if (row) {
         const userPermissions = userTablePermissions(row.id);
+        console.log('userPermissions:' + userPermissions);
+
         // Send the user ID, table IDs, and success message
-        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUsername|^|${username}|#|usersPermissions|^|${userPermissions}`);
+        socket.send(`result|^|OK|#|action|^|login|#|registeredUserId|^|${row.id}|#|registeredUsername|^|${username}|#|userPermissions|^|${userPermissions}`);
       } else {
         socket.send('Invalid credentials');
       }
@@ -113,10 +115,10 @@ function userTablePermissions(id) {
       if (row) {
         // Send the user ID, table IDs
         result = `${row.table_ids}|!|${row.permission_levels}`;
-        console.log('result:' + result);
       } else {
         console.error('ERR:userTablePermissions: no match');
       }
+      console.log('result:' + result);
       return result;
     }
   });
