@@ -104,7 +104,7 @@ function loginUser(socket, username, password) {
 }
 
 function userTablePermissions(id) {
-  var result ='';
+  var result;
   var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
   db[0].get(db_cmd, [id], (err, row) => {
     if (err) {
