@@ -104,7 +104,7 @@ function loginUser(socket, username, password) {
 }
 
 function userTablePermissions(id) {
-  var result;
+  var result = '';
   var db_cmd = 'SELECT * FROM user_table_permissions WHERE user_id = ?';
   db[0].get(db_cmd, [id], (err, row) => {
     if (err) {
@@ -114,7 +114,7 @@ function userTablePermissions(id) {
       console.log('id:' + id);
       if (row) {
         // Send the user ID, table IDs
-        result = `${row.table_ids}|!|${row.permission_levels}`;
+        result = row.table_ids + '|!|' + row.permission_levels;
         console.log('row result:' + result);
       } else {
         console.error('ERR:userTablePermissions: no match');
