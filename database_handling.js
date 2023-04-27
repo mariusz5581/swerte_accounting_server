@@ -36,7 +36,7 @@ function initializeUserDatabase() {
     });
   });
 
-  db[0].all('SELECT username FROM users', (err, rows) => {
+  db[0].all('SELECT id, username FROM users', (err, rows) => {
     if (err) {
       console.error(err.message);
     } else {
@@ -57,6 +57,7 @@ function initializeUserDatabase() {
       });
     }
   });
+
 }
 
 function addNewUserToDatabase(username, password) {
